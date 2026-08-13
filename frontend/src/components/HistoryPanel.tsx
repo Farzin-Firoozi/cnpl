@@ -1,3 +1,4 @@
+import { cn } from '../lib/cn'
 import type { HistoryEntry } from '../store/history'
 
 interface HistoryPanelProps {
@@ -56,7 +57,10 @@ export function HistoryPanel({
       {history.length > 0 && (
         <button
           type="button"
-          className="m-4 rounded-xl bg-white/10 py-3 text-sm text-red-400 hover:bg-white/15"
+          className={cn(
+            'm-4 rounded-xl bg-white/10 py-3 text-sm text-red-400 hover:bg-white/15',
+            'duration-100 transition-all cursor-pointer active:scale-95',
+          )}
           onClick={onClear}
         >
           Clear history
