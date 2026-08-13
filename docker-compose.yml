@@ -1,0 +1,17 @@
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8081:8080"
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        # Empty: nginx proxies same-origin /api/* to the backend service (see nginx.conf).
+        # Set to a real backend URL to point this build at an externally deployed backend.
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-}
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend

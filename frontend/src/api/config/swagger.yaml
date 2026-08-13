@@ -1,0 +1,352 @@
+{
+  "components": {
+    "responses": {
+      "ErrorResponse": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        },
+        "description": "Invalid input"
+      },
+      "ResultResponse": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Result"
+            }
+          }
+        },
+        "description": "Successful calculation"
+      }
+    },
+    "schemas": {
+      "BinaryOperandsRequest": {
+        "properties": {
+          "a": {
+            "format": "double",
+            "type": "number"
+          },
+          "b": {
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "required": [
+          "a",
+          "b"
+        ],
+        "type": "object"
+      },
+      "Error": {
+        "properties": {
+          "error": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "type": "object"
+      },
+      "HealthStatus": {
+        "properties": {
+          "status": {
+            "example": "ok",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "type": "object"
+      },
+      "PowerRequest": {
+        "properties": {
+          "base": {
+            "format": "double",
+            "type": "number"
+          },
+          "exponent": {
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "required": [
+          "base",
+          "exponent"
+        ],
+        "type": "object"
+      },
+      "Result": {
+        "properties": {
+          "result": {
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "type": "object"
+      },
+      "UnaryOperandRequest": {
+        "properties": {
+          "a": {
+            "format": "double",
+            "type": "number"
+          }
+        },
+        "required": [
+          "a"
+        ],
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "Microservice exposing basic and advanced arithmetic operations.",
+    "title": "Calculator API",
+    "version": "1.0.0"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/add": {
+      "post": {
+        "operationId": "Add",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BinaryOperandsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/ResultResponse"
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        },
+        "summary": "Add two numbers",
+        "tags": [
+          "calculator"
+        ]
+      }
+    },
+    "/divide": {
+      "post": {
+        "operationId": "Divide",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BinaryOperandsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/ResultResponse"
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Division by zero"
+          }
+        },
+        "summary": "Divide a by b",
+        "tags": [
+          "calculator"
+        ]
+      }
+    },
+    "/healthz": {
+      "get": {
+        "operationId": "HealthCheck",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthStatus"
+                }
+              }
+            },
+            "description": "Service is healthy"
+          }
+        },
+        "summary": "Liveness check",
+        "tags": [
+          "meta"
+        ]
+      }
+    },
+    "/multiply": {
+      "post": {
+        "operationId": "Multiply",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BinaryOperandsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/ResultResponse"
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        },
+        "summary": "Multiply two numbers",
+        "tags": [
+          "calculator"
+        ]
+      }
+    },
+    "/percentage": {
+      "post": {
+        "operationId": "Percentage",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BinaryOperandsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/ResultResponse"
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        },
+        "summary": "a percent of b (a% of b)",
+        "tags": [
+          "calculator"
+        ]
+      }
+    },
+    "/power": {
+      "post": {
+        "operationId": "Power",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PowerRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/ResultResponse"
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        },
+        "summary": "Raise base to exponent",
+        "tags": [
+          "calculator"
+        ]
+      }
+    },
+    "/sqrt": {
+      "post": {
+        "operationId": "Sqrt",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UnaryOperandRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/ResultResponse"
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "description": "Square root of negative number"
+          }
+        },
+        "summary": "Square root of a",
+        "tags": [
+          "calculator"
+        ]
+      }
+    },
+    "/subtract": {
+      "post": {
+        "operationId": "Subtract",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BinaryOperandsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/ResultResponse"
+          },
+          "400": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        },
+        "summary": "Subtract b from a",
+        "tags": [
+          "calculator"
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "/api/v1"
+    }
+  ]
+}
