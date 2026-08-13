@@ -1,0 +1,221 @@
+openapi: 3.0.3
+info:
+  title: Calculator API
+  description: Microservice exposing basic and advanced arithmetic operations.
+  version: 1.0.0
+servers:
+  - url: /api/v1
+
+paths:
+  /add:
+    post:
+      operationId: add
+      summary: Add two numbers
+      tags: [calculator]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BinaryOperandsRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/ResultResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /subtract:
+    post:
+      operationId: subtract
+      summary: Subtract b from a
+      tags: [calculator]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BinaryOperandsRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/ResultResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /multiply:
+    post:
+      operationId: multiply
+      summary: Multiply two numbers
+      tags: [calculator]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BinaryOperandsRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/ResultResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /divide:
+    post:
+      operationId: divide
+      summary: Divide a by b
+      tags: [calculator]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BinaryOperandsRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/ResultResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '422':
+          description: Division by zero
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /power:
+    post:
+      operationId: power
+      summary: Raise base to exponent
+      tags: [calculator]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PowerRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/ResultResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /sqrt:
+    post:
+      operationId: sqrt
+      summary: Square root of a
+      tags: [calculator]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UnaryOperandRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/ResultResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '422':
+          description: Square root of negative number
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /percentage:
+    post:
+      operationId: percentage
+      summary: a percent of b (a% of b)
+      tags: [calculator]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BinaryOperandsRequest'
+      responses:
+        '200':
+          $ref: '#/components/responses/ResultResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+
+  /healthz:
+    get:
+      operationId: healthCheck
+      summary: Liveness check
+      tags: [meta]
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthStatus'
+
+components:
+  responses:
+    ResultResponse:
+      description: Successful calculation
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Result'
+    ErrorResponse:
+      description: Invalid input
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  schemas:
+    BinaryOperandsRequest:
+      type: object
+      required: [a, b]
+      properties:
+        a:
+          type: number
+          format: double
+        b:
+          type: number
+          format: double
+
+    UnaryOperandRequest:
+      type: object
+      required: [a]
+      properties:
+        a:
+          type: number
+          format: double
+
+    PowerRequest:
+      type: object
+      required: [base, exponent]
+      properties:
+        base:
+          type: number
+          format: double
+        exponent:
+          type: number
+          format: double
+
+    Result:
+      type: object
+      required: [result]
+      properties:
+        result:
+          type: number
+          format: double
+
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+
+    HealthStatus:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          example: ok
