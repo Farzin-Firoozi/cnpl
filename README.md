@@ -121,6 +121,15 @@ go test ./... -cover
 
 `internal/calculator` (pure arithmetic) is **100% covered**; `internal/api` is tested end-to-end via `httptest` against the generated router (success + validation + `422` edge cases for every operation).
 
+| Package | Coverage |
+|---|---|
+| `internal/calculator` | **100.0%** |
+| `internal/api` | 46.5%¹ |
+| `cmd/server` | 0.0%² |
+
+¹ `internal/api` includes ~800 lines of `oapi-codegen`-generated boilerplate (chi route wiring, spec decoding, unimplemented-handler stubs) that inflate the denominator — the hand-written `handler.go` (the actual business logic) is exercised by every test case.
+² `cmd/server/main.go` is process wiring (router setup, `http.ListenAndServe`) — not meaningfully unit-testable; it's covered instead by the Docker/`curl` smoke tests in this README.
+
 ### Frontend
 
 ```bash
@@ -129,7 +138,23 @@ pnpm test              # run once
 pnpm test:coverage      # coverage report
 ```
 
-**95 tests** across the API mutator, format utilities, the `useCalculatorEngine` state machine, the keyboard binding, the history store (jotai + localStorage persistence), and full `Calculator` integration tests (button clicks *and* physical keyboard input) — **~94% statement coverage** on hand-written code (generated API client excluded from the report).
+**95 tests** across the API mutator, format utilities, the `useCalculatorEngine` state machine, the keyboard binding, the history store (jotai + localStorage persistence), and full `Calculator` integration tests (button clicks *and* physical keyboard input) — generated API client (`src/api/functions`, `src/api/models`) excluded from the report, since it's boilerplate, not hand-written logic.
+
+| Metric | Coverage |
+|---|---|
+| Statements | **93.6%** (249/266) |
+| Branches | **93.1%** (149/160) |
+| Functions | **86.2%** (56/65) |
+| Lines | **94.8%** (235/248) |
+
+| Area | Coverage (statements) |
+|---|---|
+| `hooks/` (`useCalculatorEngine`, `useCalculatorKeyboard`) | **97.1%** |
+| `lib/format.ts` | **96.0%** |
+| `api/mutator` (axios instance + error mapping) | 71–94% |
+| `components/` | 79.5%¹ |
+
+¹ Pulled down mainly by `CalculatorKeypad.tsx` (61%) — it's a large, mostly-declarative button grid; every button type is exercised via at least one integration test, but not every individual digit button (`4`, `5`, `6`, ...) has its own dedicated assertion, since they all route through the same `inputDigit` path already covered by `useCalculatorEngine`'s unit tests.
 
 Covers: digit/decimal entry edge cases, backspace, sign toggle, operator chaining and switching, repeated `=` (real-calculator "redo last op"), `%` semantics that differ by pending operator (fraction vs. percent-of-accumulator — see design decisions below), sqrt/power chaining, `AC` vs `C` (clear vs clear-entry), backend `422` error surfacing and recovery, and history persistence/capping.
 
