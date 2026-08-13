@@ -1,6 +1,21 @@
 # 🤖 AI Prompts Used
 
-This project was built with **Claude Code**, running the [oh-my-claudecode (OMC)](https://github.com/oh-my-claudecode) plugin. Below is a chronological summary of the prompts used to drive the work (paraphrased/condensed where a single turn covered several small asks).
+## Tooling
+
+- **Agent**: [Claude Code](https://claude.com/claude-code), Anthropic's CLI coding agent.
+- **Model**: Claude **Sonnet 5**, medium reasoning effort.
+- **Plugin**: [oh-my-claudecode (OMC)](https://github.com/oh-my-claudecode) — a multi-agent orchestration layer on top of Claude Code.
+
+## Workflow
+
+This wasn't single-shot "write a calculator" prompting. Every phase followed the same loop: **direct the architecture → let the agent execute → verify against a running system → iterate on real gaps**, not on guesses.
+
+- **Spec-first, not vibes-first**: backend design was settled (per-op REST routes vs. a generic `/calculate` endpoint, `chi` vs. stdlib) *before* a line of implementation code, by asking the agent to argue trade-offs and defend a recommendation, not just generate something.
+- **Nothing shipped unverified**: every backend change ran through `go test`/`go vet`/`gofmt`; every frontend change through `vitest`/`tsc`; every full-stack change was rebuilt in Docker and hit with live `curl` against the running containers, plus headless-Chrome screenshots to catch real layout bugs (a CLS regression, a broken grid row, a clipped display) that only show up at runtime, not in a diff.
+- **Bugs were diagnosed from behavior, not patched from symptoms**: e.g. "percentage is not working" was traced to the actual formula (`(a/100)*b` with `b=100` is a no-op identity), then corrected to match how real calculators branch `%` behavior by pending operator (`+`/`−` vs `×`/`÷`/`^`) — not just tweaked until a number looked right.
+- **Design decisions were interrogated, not accepted**: e.g. rejecting a first-pass `overwrite ? accumulator : display` ternary in `equals()` once it was shown to silently break the percent flow, in favor of a simpler invariant (`display` always holds the right operand) that the agent could prove correct instead of special-casing.
+- **Test coverage was scenario-driven**, requested explicitly as "all interactions and edge cases" and delivered as a real matrix (digit entry, backspace, sign toggle, operator switching, repeated `=`, `%` per operator, sqrt/power chaining, `AC` vs `C`, error recovery, history persistence/capping) — not a token happy-path test per function.
+- **Iteration was tight and specific**, not vague re-prompts: "the result changes causes CLS, make its height static" and "when I press equal it should redo the last operation, am I right?" are diagnoses, not just "fix it."
 
 ## Planning
 
