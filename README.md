@@ -12,6 +12,14 @@ A full-stack calculator — a **Go** REST API and a **React + TypeScript** front
 
 ---
 
+## 📸 Screenshots
+
+| Keypad | History |
+|---|---|
+| ![Keypad](./screenshots/Keypad.png) | ![History](./screenshots/History.png) |
+
+---
+
 ## 🚀 Quickstart (Docker — fastest path)
 
 Requires [Docker](https://www.docker.com/) / OrbStack running.
