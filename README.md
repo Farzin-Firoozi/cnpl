@@ -52,12 +52,13 @@ go run ./cmd/server
 
 ```bash
 cd frontend
+cp .env.example .env   # 📝 update VITE_API_BASE_URL before running — see note below
 pnpm install
 pnpm dev
 # 🟢 http://localhost:5173 (proxies /api/* to localhost:8081 — see vite.config.ts)
 ```
 
-> ⚠️ If running the backend manually (not via Docker) on port `8080`, update the proxy target in `frontend/vite.config.ts` from `8081` to `8080`, or set `VITE_API_BASE_URL` — see `frontend/.env.example`.
+> ⚠️ **Update `frontend/.env` before running manually.** `VITE_API_BASE_URL` is empty by default, which assumes the same-origin proxy (`vite.config.ts`'s dev proxy points at `localhost:8081`, matching the Docker Compose backend port). If you're running the backend manually with `go run ./cmd/server` (port `8080`, not `8081`), either set `VITE_API_BASE_URL=http://localhost:8080/api/v1` in `frontend/.env`, or update the proxy target in `frontend/vite.config.ts` from `8081` to `8080` instead.
 
 Full details, including regenerating the API client and keyboard shortcuts, live in [`frontend/README.md`](./frontend/README.md) and [`backend/README.md`](./backend/README.md).
 
